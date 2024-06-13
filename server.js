@@ -1,9 +1,10 @@
 const express = require('express')
 const app = express()
+const jwt = require('jsonwebtoken')
 require('./connection')
 
 
-// this line is copyed from the npm packesd
+//This line is copied from the npm packed
 var bodyParser = require('body-parser')
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -14,8 +15,30 @@ app.use(bodyParser.json())
 
 // know linking the Routers folder & files with server.js
 const studroute = require('./Routers/Student')
-// ".use" is for when I want to call only students its will call all the student from Routes path of studroute.
-app.use('/student', studroute)
+// ".use" is for when I want to call only students it will call all the students from Routes path of studroute.
+app.use('/student', validateUser , studroute)
+
+function validateUser(req,res,next){
+
+    jwt.verify(req.headers['x-access-token'],req.app.get('secretKey'),function(err,decoded){
+        // req.headers['x-access-token']  This is just the path to enter in the header section  
+        // req.app.get('secretKey') This is the secret key  that we had made it before & it should be secured.
+
+        if(err){
+            res.json({'Status':"authenticate",message:err.message})
+             // It sends a  "authenticate"  status code "secret or public key must be provided".
+        }
+        else
+        {
+            //  req.body.id = decoded._id
+            next()
+        }
+    })
+}
+
+
+// "secretkey" is coming from the "userController"
+app.set('secretkey',"I am a developer 12332100")
 
 
 
@@ -23,8 +46,9 @@ app.use('/student', studroute)
 const userRouter = require('../node/Routers/userRouter')
 app.use('/user',userRouter)
 
-// "secretkey"its coming from the "userController"
-app.set('secretkey',"I am a developer 12332100")
+
+
+
 
 app.get("/", (req, res)=>{
     res.send("hello node.js")
