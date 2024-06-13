@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-const jwt = require('jsonwebtoken')
 require('./connection')
 
 
@@ -17,24 +16,6 @@ app.use(bodyParser.json())
 const studroute = require('./Routers/Student')
 // ".use" is for when I want to call only students it will call all the students from Routes path of studroute.
 app.use('/student', validateUser , studroute)
-
-function validateUser(req,res,next){
-
-    jwt.verify(req.headers['x-access-token'],req.app.get('secretKey'),function(err,decoded){
-        // req.headers['x-access-token']  This is just the path to enter in the header section  
-        // req.app.get('secretKey') This is the secret key  that we had made it before & it should be secured.
-
-        if(err){
-            res.json({'Status':"authenticate",message:err.message})
-             // It sends a  "authenticate"  status code "secret or public key must be provided".
-        }
-        else
-        {
-            //  req.body.id = decoded._id
-            next()
-        }
-    })
-}
 
 
 // "secretkey" is coming from the "userController"
