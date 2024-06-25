@@ -42,9 +42,14 @@ app.set('secretKey', "I am a developer 12332100");
 
 
 
-// add the "userRouter" to connect the folders:
+//Add the "userRouter" to connect the folders:
 const userRouter = require('../node/Routers/userRouter')
 app.use('/user',userRouter)
+
+
+//add the "FileUploads" to connect the folders:
+const FileUplods = require('../node/Routers/FileUploads')
+app.use('/upload', FileUplods )
 
 
 
